@@ -32,10 +32,10 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void IgniteSql()
         {
-            var sqlQuery = new SqlQuery(typeof (Person), "where id > ? and id < ?", 1000, 1100);
+            var sqlQuery = new SqlQuery(typeof (Person), "where id > ? and id < ?", SqlDb.IdMin, SqlDb.IdMax);
             var res = _cache.Query(sqlQuery).GetAll();
 
-            if (res.Count != 9)
+            if (res.Count != SqlDb.IdMax - SqlDb.IdMin - 1)
                 throw new Exception();
         }
     }

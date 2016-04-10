@@ -9,6 +9,9 @@ namespace IgniteNetBenchmarks
 {
     public static class SqlDb
     {
+        public const int IdMin = 1000;
+        public const int IdMax = 1005;
+
         public const string SqlConnectionString =
             @"Integrated Security=SSPI;Persist Security Info=False;Data Source=.\SQLEXPRESS";
 

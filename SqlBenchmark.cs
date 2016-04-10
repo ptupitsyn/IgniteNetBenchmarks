@@ -26,12 +26,7 @@ namespace IgniteNetBenchmarks
 
             var cache = ignite.CreateCache<int, Person>(new CacheConfiguration("persons", typeof(Person)));
 
-            cache.PutAll(Enumerable.Range(1, 10000).ToDictionary(x => x, x => new Person
-            {
-                Id = x,
-                Data = Guid.NewGuid().ToString(),
-                Name = "Vasya Petin " + x
-            }));
+            cache.PutAll(SqlDb.GetTestData().ToDictionary(x => x.Id, x => x));
 
             return cache;
         }

@@ -6,7 +6,9 @@ namespace IgniteNetBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<SqlBenchmark>();
+            //BenchmarkRunner.Run<SqlBenchmark>();
+
+            SqlDb.ResetPersons();
         }
     }
 }

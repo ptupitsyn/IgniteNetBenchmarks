@@ -32,8 +32,8 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void IgniteSql()
         {
-            var sqlQuery = new SqlQuery(typeof (Person), "where id > ? and id < ?", SqlDb.IdMin, SqlDb.IdMax);
-            var res = _cache.Query(sqlQuery).GetAll();
+            var sqlQuery = new SqlFieldsQuery("select id, name, data from person where id > ? and id < ?", SqlDb.IdMin, SqlDb.IdMax);
+            var res = _cache.QueryFields(sqlQuery).GetAll();
 
             if (res.Count != SqlDb.IdMax - SqlDb.IdMin - 1)
                 throw new Exception();

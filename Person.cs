@@ -10,6 +10,7 @@ namespace IgniteNetBenchmarks
         [QuerySqlField]
         public string Name { get; set; }
 
+        [QuerySqlField]
         public string Data { get; set; }
     }
 }

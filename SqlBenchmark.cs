@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Binary;
@@ -12,10 +13,27 @@ namespace IgniteNetBenchmarks
     //[Config("jobs=LongRun")]
     public class SqlBenchmark
     {
-        private readonly ICache<int, Person> _cache = Setup();
+        private readonly ICache<int, Person> _cache = SetupIgnite();
+
+        private readonly SqlCommand _sqlCommand = SetupSql();
+
+        private static SqlCommand SetupSql()
+        {
+            SqlDb.ResetPersons();
+
+            var cmd = new SqlCommand("select * from [IgniteNetBenchmarks].[dbo].Persons where ID > @min and ID < @max",
+                SqlDb.GetOpenConnection());
+
+            cmd.Parameters.AddWithValue("@min", 1000);
+            cmd.Parameters.AddWithValue("@max", 1010);
+
+            cmd.Prepare();
+
+            return cmd;
+        }
 
         //[Setup]
-        public static ICache<int, Person> Setup()
+        public static ICache<int, Person> SetupIgnite()
         {
             Ignition.StopAll(true);
 
@@ -44,7 +62,18 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void SqlServer()
         {
-            
+            using (var reader = _sqlCommand.ExecuteReader())
+            {
+                int i = 0;
+
+                while (reader.Read())
+                {
+                    i++;
+                }
+
+                if (i != 9)
+                    throw new Exception();
+            }
         }
     }
 

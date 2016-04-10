@@ -6,7 +6,8 @@ namespace IgniteNetBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<SqlBenchmark>();
+            BenchmarkRunner.Run<SqlServerBenchmark>();
+            //BenchmarkRunner.Run<IgniteSqlBenchmark>();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Running;
 
 namespace IgniteNetBenchmarks
 {
@@ -6,8 +9,12 @@ namespace IgniteNetBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<SqlServerBenchmark>();
+            //new IgniteSqlBenchmark();
+            //BenchmarkRunner.Run<SqlServerBenchmark>();
             //BenchmarkRunner.Run<IgniteSqlBenchmark>();
+            BenchmarkRunner.Run<CasterBenchmark>(ManualConfig
+                .Create(DefaultConfig.Instance)
+                .With(Job.RyuJitX64.WithLaunchCount(1).WithWarmupCount(1)));
         }
     }
 }

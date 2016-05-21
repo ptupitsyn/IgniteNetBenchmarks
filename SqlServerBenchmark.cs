@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 
 namespace IgniteNetBenchmarks
@@ -13,7 +15,7 @@ namespace IgniteNetBenchmarks
         {
             SqlDb.ResetPersons();
 
-            var cmd = new SqlCommand("select * from [IgniteNetBenchmarks].[dbo].Persons where ID > @min and ID < @max",
+            var cmd = new SqlCommand("select Id from [IgniteNetBenchmarks].[dbo].Persons where ID > @min and ID < @max",
                 SqlDb.GetOpenConnection());
 
             cmd.Parameters.Add("@min", SqlDbType.Int).Value = SqlDb.IdMin;
@@ -29,25 +31,23 @@ namespace IgniteNetBenchmarks
         {
             using (var reader = _sqlCommand.ExecuteReader())
             {
-                int i = 0;
+                var persons = ReadPersons(reader).ToList();
 
-                while (reader.Read())
-                {
-                    var p = new Person
-                    {
-                        Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Data = reader.GetString(2)
-                    };
-
-                    if (p.Name == null || p.Data == null)
-                        throw new Exception();
-
-                    i++;
-                }
-
-                if (i != SqlDb.IdMax - SqlDb.IdMin - 1)
+                if (persons.Count != SqlDb.IdMax - SqlDb.IdMin - 1)
                     throw new Exception();
+            }
+        }
+
+        private static IEnumerable<Person> ReadPersons(IDataReader reader)
+        {
+            while (reader.Read())
+            {
+                yield return new Person
+                {
+                    Id = reader.GetInt32(0),
+                    //Name = reader.GetString(1),
+                    //Data = reader.GetString(2)
+                };
             }
         }
     }

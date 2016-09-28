@@ -1,3 +1,4 @@
+using System;
 using Apache.Ignite.Core.Binary;
 using Apache.Ignite.Core.Cache.Configuration;
 using ProtoBuf;
@@ -5,6 +6,7 @@ using ProtoBuf;
 namespace IgniteNetBenchmarks
 {
     [ProtoContract]
+    [Serializable]
     public class Person
     {
         [ProtoMember(1)]
@@ -45,5 +47,11 @@ namespace IgniteNetBenchmarks
             Name = raw.ReadString();
             Data = raw.ReadString();
         }
+    }
+
+    [Serializable]
+    public class PersonSerializable : Person
+    {
+        // No-op.
     }
 }

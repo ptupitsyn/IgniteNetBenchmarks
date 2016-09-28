@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace IgniteNetBenchmarks
 {
@@ -16,9 +14,7 @@ namespace IgniteNetBenchmarks
             //    .Create(DefaultConfig.Instance)
             //    .With(Job.RyuJitX64.WithLaunchCount(1).WithWarmupCount(1)));
 
-            BenchmarkRunner.Run<IgniteSerializationBenchmark>(ManualConfig
-                .Create(DefaultConfig.Instance)
-                .With(Job.RyuJitX64.WithLaunchCount(1).WithWarmupCount(1)));
+            BenchmarkRunner.Run<IgniteSerializationBenchmark>();
         }
     }
 }

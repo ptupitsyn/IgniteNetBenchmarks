@@ -22,6 +22,13 @@ namespace IgniteNetBenchmarks
             Data = new string('g', 1000)
         };
 
+        private readonly PersonSerializable _personSerializable = new PersonSerializable()
+        {
+            Id = 65535,
+            Name = "John Johnson",
+            Data = new string('g', 1000)
+        };
+
         private readonly PersonRaw _personRaw = new PersonRaw
         {
             Id = 65535,
@@ -80,6 +87,16 @@ namespace IgniteNetBenchmarks
             var result = (Person)_deserialize(bytes, false);
 
             if (_person.Data != result.Data)
+                throw new Exception();
+        }
+
+        [Benchmark]
+        public void IgniteSerializable()
+        {
+            var bytes = _serialize(_personSerializable);
+            var result = (PersonSerializable)_deserialize(bytes, false);
+
+            if (_personSerializable.Data != result.Data)
                 throw new Exception();
         }
 

@@ -32,12 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Ignite.Core, Version=1.6.0.8653, Culture=neutral, PublicKeyToken=a487a7ff0b2aaa4a, processorArchitecture=MSIL">
-      <HintPath>packages\Apache.Ignite.1.6.0\lib\net40\Apache.Ignite.Core.dll</HintPath>
+    <Reference Include="Apache.Ignite.Core">
+      <HintPath>packages\Apache.Ignite.1.7.0\lib\net40\Apache.Ignite.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Apache.Ignite.Linq, Version=1.6.0.8653, Culture=neutral, PublicKeyToken=a487a7ff0b2aaa4a, processorArchitecture=MSIL">
-      <HintPath>packages\Apache.Ignite.Linq.1.6.0\lib\net40\Apache.Ignite.Linq.dll</HintPath>
+    <Reference Include="Apache.Ignite.Linq">
+      <HintPath>packages\Apache.Ignite.Linq.1.7.0\lib\net40\Apache.Ignite.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="BenchmarkDotNet, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CasterBenchmark.cs" />
+    <Compile Include="IgniteSerializationBenchmark.cs" />
     <Compile Include="IgniteSqlBenchmark.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Program.cs" />

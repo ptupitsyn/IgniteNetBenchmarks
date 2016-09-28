@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Binary;
 using BenchmarkDotNet.Attributes;
+using ProtoBuf;
 
 namespace IgniteNetBenchmarks
 {
@@ -58,10 +60,38 @@ namespace IgniteNetBenchmarks
                 throw new Exception();
         }
 
+        [Benchmark]
+        public void Protobuf()
+        {
+            var bytes = SerializeProtobuf(_person);
+            var result = DeserializeProtobuf<Person>(bytes);
+
+            if (_person.Data != result.Data)
+                throw new Exception();
+        }
+
         //[Benchmark]
         public void IgniteReflectiveRaw()
         {
             // TODO
+        }
+
+        private static byte[] SerializeProtobuf(object obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, obj);
+
+                return ms.GetBuffer();
+            }
+        }
+
+        private static T DeserializeProtobuf<T>(byte[] bytes)
+        {
+            using (var ms = new MemoryStream(bytes))
+            {
+                return Serializer.Deserialize<T>(ms);
+            }
         }
     }
 }

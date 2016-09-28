@@ -19,7 +19,21 @@ namespace IgniteNetBenchmarks
         {
             Id = 65535,
             Name = "John Johnson",
-            Data = Enumerable.Range(1, 10).Select(x => Guid.NewGuid().ToString()).Aggregate((x, y) => x + y)
+            Data = new string('g', 1000)
+        };
+
+        private readonly PersonRaw _personRaw = new PersonRaw
+        {
+            Id = 65535,
+            Name = "John Johnson",
+            Data = new string('g', 1000)
+        };
+
+        private readonly PersonManualRaw _personManualRaw = new PersonManualRaw
+        {
+            Id = 65535,
+            Name = "John Johnson",
+            Data = new string('g', 1000)
         };
 
         public IgniteSerializationBenchmark()
@@ -27,7 +41,16 @@ namespace IgniteNetBenchmarks
             var ignite = Ignition.TryGetIgnite()
                          ?? Ignition.Start(new IgniteConfiguration
                          {
-                             BinaryConfiguration = new BinaryConfiguration(typeof(Person))
+                             BinaryConfiguration = new BinaryConfiguration(typeof(Person), typeof(PersonManualRaw))
+                             {
+                                 TypeConfigurations =
+                                 {
+                                     new BinaryTypeConfiguration(typeof(PersonRaw))
+                                     {
+                                         Serializer = new BinaryReflectiveSerializer {RawMode = true}
+                                     }
+                                 }
+                             }
                          });
 
             var marsh =
@@ -70,10 +93,24 @@ namespace IgniteNetBenchmarks
                 throw new Exception();
         }
 
-        //[Benchmark]
+        [Benchmark]
         public void IgniteReflectiveRaw()
         {
-            // TODO
+            var bytes = _serialize(_personRaw);
+            var result = (PersonRaw)_deserialize(bytes, false);
+
+            if (_personRaw.Data != result.Data)
+                throw new Exception();
+        }
+
+        [Benchmark]
+        public void IgniteManualRaw()
+        {
+            var bytes = _serialize(_personManualRaw);
+            var result = (PersonManualRaw)_deserialize(bytes, false);
+
+            if (_personManualRaw.Data != result.Data)
+                throw new Exception();
         }
 
         private static byte[] SerializeProtobuf(object obj)

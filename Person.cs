@@ -1,6 +1,5 @@
 using System;
 using Apache.Ignite.Core.Binary;
-using Apache.Ignite.Core.Cache.Configuration;
 using ProtoBuf;
 
 namespace IgniteNetBenchmarks
@@ -10,20 +9,31 @@ namespace IgniteNetBenchmarks
     public class Person
     {
         [ProtoMember(1)]
-        [QuerySqlField(IsIndexed = true)]
         public int Id { get; set; }
 
         [ProtoMember(2)]
-        [QuerySqlField]
         public string Name { get; set; }
 
         [ProtoMember(3)]
-        [QuerySqlField]
         public string Data { get; set; }
+
+        [ProtoMember(4)]
+        public Guid Guid { get; set; }
 
         public static T CreateInstance<T>() where T : Person, new()
         {
-            return new T {Id = 255, Name = "John Johnson", Data = "123456789"};
+            return new T
+            {
+                Id = int.MinValue,
+                Name = "John Johnson",
+                Data = new string('g', 1000),
+                Guid = Guid.NewGuid()
+            };
+        }
+
+        public bool IsEqual(Person other)
+        {
+            return Id == other.Id && Name == other.Name && Data == other.Data && Guid == other.Guid;
         }
     }
 
@@ -39,6 +49,7 @@ namespace IgniteNetBenchmarks
             writer.WriteInt("id", Id);
             writer.WriteString("name", Name);
             writer.WriteString("data", Data);
+            writer.WriteGuid("guid", Guid);
         }
 
         public void ReadBinary(IBinaryReader reader)
@@ -46,6 +57,7 @@ namespace IgniteNetBenchmarks
             Id = reader.ReadInt("id");
             Name = reader.ReadString("name");
             Data = reader.ReadString("data");
+            Guid = reader.ReadGuid("guid").Value;
         }
     }
 
@@ -58,6 +70,7 @@ namespace IgniteNetBenchmarks
             raw.WriteInt(Id);
             raw.WriteString(Name);
             raw.WriteString(Data);
+            raw.WriteGuid(Guid);
         }
 
         public void ReadBinary(IBinaryReader reader)
@@ -67,6 +80,7 @@ namespace IgniteNetBenchmarks
             Id = raw.ReadInt();
             Name = raw.ReadString();
             Data = raw.ReadString();
+            Guid = raw.ReadGuid().Value;
         }
     }
 

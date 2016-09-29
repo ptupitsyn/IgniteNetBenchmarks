@@ -69,7 +69,7 @@ namespace IgniteNetBenchmarks
             var bytes = _serialize(_person);
             var result = (Person)_deserialize(bytes, false);
 
-            if (_person.Data != result.Data)
+            if (_person.IsEqual(result))
                 throw new Exception();
         }
 
@@ -79,7 +79,7 @@ namespace IgniteNetBenchmarks
             var bytes = _serialize(_personManual);
             var result = (PersonManual)_deserialize(bytes, false);
 
-            if (_personManual.Data != result.Data)
+            if (_personManual.IsEqual(result))
                 throw new Exception();
         }
 
@@ -89,7 +89,7 @@ namespace IgniteNetBenchmarks
             var bytes = _serialize(_personSerializable);
             var result = (PersonSerializable)_deserialize(bytes, false);
 
-            if (_personSerializable.Data != result.Data)
+            if (_personSerializable.IsEqual(result))
                 throw new Exception();
         }
 
@@ -99,7 +99,7 @@ namespace IgniteNetBenchmarks
             var bytes = SerializeProtobuf(_person);
             var result = DeserializeProtobuf<Person>(bytes);
 
-            if (_person.Data != result.Data)
+            if (_person.IsEqual(result))
                 throw new Exception();
         }
 
@@ -109,7 +109,7 @@ namespace IgniteNetBenchmarks
             var bytes = _serialize(_personRaw);
             var result = (PersonRaw)_deserialize(bytes, false);
 
-            if (_personRaw.Data != result.Data)
+            if (_personRaw.IsEqual(result))
                 throw new Exception();
         }
 
@@ -119,7 +119,7 @@ namespace IgniteNetBenchmarks
             var bytes = _serialize(_personManualRaw);
             var result = (PersonManualRaw)_deserialize(bytes, false);
 
-            if (_personManualRaw.Data != result.Data)
+            if (_personManualRaw.IsEqual(result))
                 throw new Exception();
         }
 

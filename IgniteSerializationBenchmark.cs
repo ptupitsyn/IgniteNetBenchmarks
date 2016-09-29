@@ -22,6 +22,13 @@ namespace IgniteNetBenchmarks
             Data = new string('g', 1000)
         };
 
+        private readonly PersonManual _personManual = new PersonManual
+        {
+            Id = 65535,
+            Name = "John Johnson",
+            Data = new string('g', 1000)
+        };
+
         private readonly PersonSerializable _personSerializable = new PersonSerializable()
         {
             Id = 65535,
@@ -48,7 +55,8 @@ namespace IgniteNetBenchmarks
             var ignite = Ignition.TryGetIgnite()
                          ?? Ignition.Start(new IgniteConfiguration
                          {
-                             BinaryConfiguration = new BinaryConfiguration(typeof(Person), typeof(PersonManualRaw))
+                             BinaryConfiguration = new BinaryConfiguration(typeof(Person), typeof(PersonManualRaw),
+                                 typeof(PersonManual))
                              {
                                  TypeConfigurations =
                                  {
@@ -87,6 +95,16 @@ namespace IgniteNetBenchmarks
             var result = (Person)_deserialize(bytes, false);
 
             if (_person.Data != result.Data)
+                throw new Exception();
+        }
+
+        [Benchmark]
+        public void IgniteManual()
+        {
+            var bytes = _serialize(_personManual);
+            var result = (PersonManual)_deserialize(bytes, false);
+
+            if (_personManual.Data != result.Data)
                 throw new Exception();
         }
 

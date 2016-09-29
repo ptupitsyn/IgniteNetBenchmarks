@@ -27,9 +27,25 @@ namespace IgniteNetBenchmarks
         // No-op.
     }
 
+    public class PersonManual : Person, IBinarizable
+    {
+        public void WriteBinary(IBinaryWriter writer)
+        {
+            writer.WriteInt("id", Id);
+            writer.WriteString("name", Name);
+            writer.WriteString("data", Data);
+        }
+
+        public void ReadBinary(IBinaryReader reader)
+        {
+            Id = reader.ReadInt("id");
+            Name = reader.ReadString("name");
+            Data = reader.ReadString("data");
+        }
+    }
+
     public class PersonManualRaw : Person, IBinarizable
     {
-        // No-op.
         public void WriteBinary(IBinaryWriter writer)
         {
             var raw = writer.GetRawWriter();

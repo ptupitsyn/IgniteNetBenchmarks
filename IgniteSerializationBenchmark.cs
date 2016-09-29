@@ -15,40 +15,15 @@ namespace IgniteNetBenchmarks
 
         private readonly Func<byte[], bool, object> _deserialize;
 
-        private readonly Person _person = new Person
-        {
-            Id = 65535,
-            Name = "John Johnson",
-            Data = new string('g', 1000)
-        };
+        private readonly Person _person = Person.CreateInstance<Person>();
 
-        private readonly PersonManual _personManual = new PersonManual
-        {
-            Id = 65535,
-            Name = "John Johnson",
-            Data = new string('g', 1000)
-        };
+        private readonly PersonManual _personManual = Person.CreateInstance<PersonManual>();
 
-        private readonly PersonSerializable _personSerializable = new PersonSerializable()
-        {
-            Id = 65535,
-            Name = "John Johnson",
-            Data = new string('g', 1000)
-        };
+        private readonly PersonSerializable _personSerializable = Person.CreateInstance<PersonSerializable>();
 
-        private readonly PersonRaw _personRaw = new PersonRaw
-        {
-            Id = 65535,
-            Name = "John Johnson",
-            Data = new string('g', 1000)
-        };
+        private readonly PersonRaw _personRaw = Person.CreateInstance<PersonRaw>();
 
-        private readonly PersonManualRaw _personManualRaw = new PersonManualRaw
-        {
-            Id = 65535,
-            Name = "John Johnson",
-            Data = new string('g', 1000)
-        };
+        private readonly PersonManualRaw _personManualRaw = Person.CreateInstance<PersonManualRaw>();
 
         public IgniteSerializationBenchmark()
         {

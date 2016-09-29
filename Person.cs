@@ -20,6 +20,11 @@ namespace IgniteNetBenchmarks
         [ProtoMember(3)]
         [QuerySqlField]
         public string Data { get; set; }
+
+        public static T CreateInstance<T>() where T : Person, new()
+        {
+            return new T {Id = 255, Name = "John Johnson", Data = "123456789"};
+        }
     }
 
     public class PersonRaw : Person

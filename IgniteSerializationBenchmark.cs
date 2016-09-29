@@ -129,7 +129,7 @@ namespace IgniteNetBenchmarks
             {
                 Serializer.Serialize(ms, obj);
 
-                return ms.GetBuffer();
+                return ms.ToArray();
             }
         }
 

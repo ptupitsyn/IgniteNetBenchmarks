@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CasterBenchmark.cs" />
+    <Compile Include="IgniteLinqBenchmark.cs" />
     <Compile Include="IgniteSerializationBenchmark.cs" />
     <Compile Include="IgniteSqlBenchmark.cs" />
     <Compile Include="Person.cs" />

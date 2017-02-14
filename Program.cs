@@ -14,7 +14,9 @@ namespace IgniteNetBenchmarks
             //    .Create(DefaultConfig.Instance)
             //    .With(Job.RyuJitX64.WithLaunchCount(1).WithWarmupCount(1)));
 
-            BenchmarkRunner.Run<IgniteSerializationBenchmark>();
+            //BenchmarkRunner.Run<IgniteSerializationBenchmark>();
+
+            BenchmarkRunner.Run<IgniteLinqBenchmark>();
         }
     }
 }

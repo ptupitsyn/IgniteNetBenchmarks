@@ -6,12 +6,14 @@ using Apache.Ignite.Core.Cache;
 using Apache.Ignite.Core.Cache.Configuration;
 using Apache.Ignite.Core.Cache.Query;
 using Apache.Ignite.Linq;
+using BenchmarkDotNet.Attributes;
 
 namespace IgniteNetBenchmarks
 {
     public class IgniteLinqBenchmark
     {
         private readonly ICache<int, SqlPerson> _cache;
+        private readonly Func<IQueryCursor<string>> _compiledQry;
 
         public IgniteLinqBenchmark()
         {
@@ -26,8 +28,12 @@ namespace IgniteNetBenchmarks
 
             _cache.PutAll(Enumerable.Range(1, 100)
                 .ToDictionary(x => x, x => new SqlPerson {Id = x, Name = "Person " + x}));
+
+            var persons = _cache.AsCacheQueryable();
+            _compiledQry = CompiledQuery2.Compile(() => persons.Where(x => x.Value.Id < 25).Select(x => x.Value.Name));
         }
 
+        [Benchmark]
         public void QuerySql()
         {
             var qry = new SqlFieldsQuery("select Name from SqlPerson where (SqlPerson.Id < ?)", 25);
@@ -38,12 +44,22 @@ namespace IgniteNetBenchmarks
                 throw new Exception("Incorrect query result");
         }
 
+        [Benchmark]
         public void QueryLinq()
         {
             var res = _cache.AsCacheQueryable()
                 .Where(x => x.Value.Id < 25)
                 .Select(x => x.Value.Name)
                 .ToList();
+
+            if (res.Count != 24)
+                throw new Exception("Incorrect query result");
+        }
+
+        [Benchmark]
+        public void QueryLinqCompiled()
+        {
+            var res = _compiledQry().GetAll();
 
             if (res.Count != 24)
                 throw new Exception("Incorrect query result");

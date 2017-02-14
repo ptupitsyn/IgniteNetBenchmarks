@@ -12,8 +12,17 @@ namespace IgniteNetBenchmarks
 {
     public class IgniteLinqBenchmark
     {
+        private const int PersonCount = 40;
+
+        private const int SelectCount = PersonCount / 2;
+
         private readonly ICache<int, SqlPerson> _cache;
-        private readonly Func<IQueryCursor<string>> _compiledQry;
+
+        private readonly SqlFieldsQuery _sqlQuery;
+
+        private readonly IQueryable<string> _linq;
+
+        private readonly Func<IQueryCursor<string>> _compiledLinq;
 
         public IgniteLinqBenchmark()
         {
@@ -26,42 +35,44 @@ namespace IgniteNetBenchmarks
 
             _cache = ignite.GetCache<int, SqlPerson>("persons");
 
-            _cache.PutAll(Enumerable.Range(1, 100)
+            _cache.PutAll(Enumerable.Range(0, PersonCount)
                 .ToDictionary(x => x, x => new SqlPerson {Id = x, Name = "Person " + x}));
 
+            // Prepare queries.
+            _sqlQuery = new SqlFieldsQuery("select Name from SqlPerson where (SqlPerson.Id < ?)", SelectCount);
+
             var persons = _cache.AsCacheQueryable();
-            _compiledQry = CompiledQuery2.Compile(() => persons.Where(x => x.Value.Id < 25).Select(x => x.Value.Name));
+
+            _linq = persons.Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Name);
+
+            _compiledLinq = CompiledQuery2.Compile(() => persons
+                .Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Name));
         }
 
         [Benchmark]
         public void QuerySql()
         {
-            var qry = new SqlFieldsQuery("select Name from SqlPerson where (SqlPerson.Id < ?)", 25);
+            var res = _cache.QueryFields(_sqlQuery).GetAll();
 
-            var res = _cache.QueryFields(qry).GetAll();
-
-            if (res.Count != 24)
+            if (res.Count != SelectCount)
                 throw new Exception("Incorrect query result");
         }
 
         [Benchmark]
         public void QueryLinq()
         {
-            var res = _cache.AsCacheQueryable()
-                .Where(x => x.Value.Id < 25)
-                .Select(x => x.Value.Name)
-                .ToList();
+            var res = _linq.ToList();
 
-            if (res.Count != 24)
+            if (res.Count != SelectCount)
                 throw new Exception("Incorrect query result");
         }
 
         [Benchmark]
         public void QueryLinqCompiled()
         {
-            var res = _compiledQry().GetAll();
+            var res = _compiledLinq().GetAll();
 
-            if (res.Count != 24)
+            if (res.Count != SelectCount)
                 throw new Exception("Incorrect query result");
         }
 

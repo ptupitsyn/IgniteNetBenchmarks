@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Binary;
@@ -12,7 +13,7 @@ namespace IgniteNetBenchmarks
 {
     public class IgniteLinqBenchmark
     {
-        private const int PersonCount = 40;
+        private const int PersonCount = 100;
 
         private const int SelectCount = PersonCount / 2;
 
@@ -20,9 +21,9 @@ namespace IgniteNetBenchmarks
 
         private readonly SqlFieldsQuery _sqlQuery;
 
-        private readonly IQueryable<string> _linq;
+        private readonly IQueryable<int> _linq;
 
-        private readonly Func<IQueryCursor<string>> _compiledLinq;
+        private readonly Func<IQueryCursor<int>> _compiledLinq;
 
         public IgniteLinqBenchmark()
         {
@@ -36,17 +37,17 @@ namespace IgniteNetBenchmarks
             _cache = ignite.GetCache<int, SqlPerson>("persons");
 
             _cache.PutAll(Enumerable.Range(0, PersonCount)
-                .ToDictionary(x => x, x => new SqlPerson {Id = x, Name = "Person " + x}));
+                .ToDictionary(x => x, x => new SqlPerson {Id = x, Age = x * 2}));
 
             // Prepare queries.
-            _sqlQuery = new SqlFieldsQuery("select Name from SqlPerson where (SqlPerson.Id < ?)", SelectCount);
+            _sqlQuery = new SqlFieldsQuery("select Age from SqlPerson where (SqlPerson.Id < ?)", SelectCount);
 
             var persons = _cache.AsCacheQueryable();
 
-            _linq = persons.Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Name);
+            _linq = persons.Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age);
 
             _compiledLinq = CompiledQuery2.Compile(() => persons
-                .Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Name));
+                .Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age));
         }
 
         [Benchmark]
@@ -54,8 +55,7 @@ namespace IgniteNetBenchmarks
         {
             var res = _cache.QueryFields(_sqlQuery).GetAll();
 
-            if (res.Count != SelectCount)
-                throw new Exception("Incorrect query result");
+            CheckResults(res.Select(x => (int) x[0]).ToList());
         }
 
         [Benchmark]
@@ -63,8 +63,7 @@ namespace IgniteNetBenchmarks
         {
             var res = _linq.ToList();
 
-            if (res.Count != SelectCount)
-                throw new Exception("Incorrect query result");
+            CheckResults(res);
         }
 
         [Benchmark]
@@ -72,8 +71,19 @@ namespace IgniteNetBenchmarks
         {
             var res = _compiledLinq().GetAll();
 
-            if (res.Count != SelectCount)
-                throw new Exception("Incorrect query result");
+            CheckResults(res);
+        }
+
+        private static void CheckResults(IList<int> ages)
+        {
+            if (ages.Count != SelectCount)
+                throw new Exception("Invalid result");
+
+            for (int i = 0; i < ages.Count; i++)
+            {
+                if (ages[i] != i * 2)
+                    throw new Exception("Invalid result");
+            }
         }
 
         private class SqlPerson
@@ -82,7 +92,7 @@ namespace IgniteNetBenchmarks
             public int Id { get; set; }
 
             [QuerySqlField]
-            public string Name { get; set; }
+            public int Age{ get; set; }
         }
     }
 }

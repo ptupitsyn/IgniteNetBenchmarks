@@ -14,6 +14,7 @@ namespace IgniteNetBenchmarks
 {
     [SimpleJob(RuntimeMoniker.NetCoreApp22)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [MemoryDiagnoser]
     public class IgniteLinqBenchmark
     {
         private const int PersonCount = 100;

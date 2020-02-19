@@ -13,6 +13,7 @@ namespace IgniteNetBenchmarks
     /// </summary>
     [SimpleJob(RuntimeMoniker.NetCoreApp22)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [MemoryDiagnoser]
     public class ConcurrentDictionaryBenchmark
     {
         private const int Count = 10000;

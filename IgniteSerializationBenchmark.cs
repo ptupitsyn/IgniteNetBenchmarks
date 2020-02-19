@@ -15,6 +15,7 @@ namespace IgniteNetBenchmarks
 {
     [SimpleJob(RuntimeMoniker.NetCoreApp22)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [MemoryDiagnoser]
     public class IgniteSerializationBenchmark
     {
         private readonly Func<object, byte[]> _serialize;

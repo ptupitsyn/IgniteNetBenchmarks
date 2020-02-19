@@ -46,7 +46,7 @@ namespace IgniteNetBenchmarks
 
             _linq = persons.Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age);
 
-            _compiledLinq = CompiledQuery2.Compile(() => persons
+            _compiledLinq = CompiledQuery.Compile(() => persons
                 .Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age));
         }
 

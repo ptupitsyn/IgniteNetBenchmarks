@@ -15,6 +15,7 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void TypeCaster()
         {
+            // https://stackoverflow.com/questions/1189144/c-sharp-non-boxing-conversion-of-generic-enum-to-int
             var x = TypeCaster<long>.Cast(Val);
 
             if (x < 3)

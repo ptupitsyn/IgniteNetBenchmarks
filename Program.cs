@@ -6,7 +6,8 @@ namespace IgniteNetBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<IgniteSerializationBenchmark>();
+            BenchmarkRunner.Run<ConcurrentDictionaryBenchmark>();
+            //BenchmarkRunner.Run<IgniteSerializationBenchmark>();
             //BenchmarkRunner.Run<CasterBenchmark>();
             //BenchmarkRunner.Run<IgniteLinqBenchmark>();
         }

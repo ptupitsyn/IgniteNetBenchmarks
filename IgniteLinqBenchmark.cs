@@ -8,9 +8,12 @@ using Apache.Ignite.Core.Cache.Configuration;
 using Apache.Ignite.Core.Cache.Query;
 using Apache.Ignite.Linq;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
+    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class IgniteLinqBenchmark
     {
         private const int PersonCount = 100;
@@ -31,7 +34,7 @@ namespace IgniteNetBenchmarks
                          ?? Ignition.Start(new IgniteConfiguration
                          {
                              BinaryConfiguration = new BinaryConfiguration(typeof(SqlPerson)),
-                             CacheConfiguration = new[] {new CacheConfiguration("persons", typeof(SqlPerson))}
+                             CacheConfiguration = new[] {new CacheConfiguration("persons", new QueryEntity(typeof(SqlPerson)))}
                          });
 
             _cache = ignite.GetCache<int, SqlPerson>("persons");
@@ -46,14 +49,14 @@ namespace IgniteNetBenchmarks
 
             _linq = persons.Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age);
 
-            _compiledLinq = CompiledQuery2.Compile(() => persons
+            _compiledLinq = CompiledQuery.Compile(() => persons
                 .Where(x => x.Value.Id < SelectCount).Select(x => x.Value.Age));
         }
 
         [Benchmark]
         public void QuerySql()
         {
-            var res = _cache.QueryFields(_sqlQuery).GetAll();
+            var res = _cache.Query(_sqlQuery).GetAll();
 
             CheckResults(res.Select(x => (int) x[0]).ToList());
         }

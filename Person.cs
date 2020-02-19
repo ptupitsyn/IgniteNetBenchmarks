@@ -57,7 +57,7 @@ namespace IgniteNetBenchmarks
             Id = reader.ReadInt("id");
             Name = reader.ReadString("name");
             Data = reader.ReadString("data");
-            Guid = reader.ReadGuid("guid").Value;
+            Guid = reader.ReadGuid("guid").GetValueOrDefault();
         }
     }
 
@@ -80,7 +80,7 @@ namespace IgniteNetBenchmarks
             Id = raw.ReadInt();
             Name = raw.ReadString();
             Data = raw.ReadString();
-            Guid = raw.ReadGuid().Value;
+            Guid = raw.ReadGuid().GetValueOrDefault();
         }
     }
 

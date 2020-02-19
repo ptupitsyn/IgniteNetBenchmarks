@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
-using System.Text;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
+    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class CasterBenchmark
     {
         private static readonly long Val = long.MaxValue/2;
@@ -15,6 +15,7 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void TypeCaster()
         {
+            // https://stackoverflow.com/questions/1189144/c-sharp-non-boxing-conversion-of-generic-enum-to-int
             var x = TypeCaster<long>.Cast(Val);
 
             if (x < 3)

@@ -20,13 +20,13 @@ namespace IgniteNetBenchmarks
         [ProtoMember(4)]
         public Guid Guid { get; set; }
 
-        public static T CreateInstance<T>() where T : Person, new()
+        public static T CreateInstance<T>(int id = int.MinValue, int dataSize = 1000) where T : Person, new()
         {
             return new T
             {
-                Id = int.MinValue,
+                Id = id,
                 Name = "John Johnson",
-                Data = new string('g', 1000),
+                Data = new string('g', dataSize),
                 Guid = Guid.NewGuid()
             };
         }

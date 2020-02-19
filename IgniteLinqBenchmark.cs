@@ -31,7 +31,7 @@ namespace IgniteNetBenchmarks
                          ?? Ignition.Start(new IgniteConfiguration
                          {
                              BinaryConfiguration = new BinaryConfiguration(typeof(SqlPerson)),
-                             CacheConfiguration = new[] {new CacheConfiguration("persons", typeof(SqlPerson))}
+                             CacheConfiguration = new[] {new CacheConfiguration("persons", new QueryEntity(typeof(SqlPerson)))}
                          });
 
             _cache = ignite.GetCache<int, SqlPerson>("persons");
@@ -53,7 +53,7 @@ namespace IgniteNetBenchmarks
         [Benchmark]
         public void QuerySql()
         {
-            var res = _cache.QueryFields(_sqlQuery).GetAll();
+            var res = _cache.Query(_sqlQuery).GetAll();
 
             CheckResults(res.Select(x => (int) x[0]).ToList());
         }

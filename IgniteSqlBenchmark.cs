@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Binary;
 using Apache.Ignite.Core.Cache;
@@ -27,14 +26,14 @@ namespace IgniteNetBenchmarks
 
             Console.WriteLine(fieldsQuery.Sql);
 
-            var c = _cache.QueryFields(
+            var c = _cache.Query(
                 new SqlFieldsQuery(
                     "select _T0.Id from \"persons\".Person as _T0 where ((_T0.Id > ?) and (_T0.Id < ?))", SqlDb.IdMin,
                     SqlDb.IdMax)).GetAll();
 
             Console.WriteLine(c.Count);
 
-            Console.WriteLine(_cache.QueryFields(fieldsQuery).GetAll().Count);
+            Console.WriteLine(_cache.Query(fieldsQuery).GetAll().Count);
 
             _qry = CompiledQuery.Compile((int min, int max) => _cache.AsCacheQueryable()
                 .Select(x => x.Value.Id)
@@ -52,7 +51,7 @@ namespace IgniteNetBenchmarks
                 BinaryConfiguration = new BinaryConfiguration(typeof (Person))
             });
 
-            var cache = ignite.CreateCache<int, Person>(new CacheConfiguration("persons", typeof(Person)));
+            var cache = ignite.CreateCache<int, Person>(new CacheConfiguration("persons", new QueryEntity(typeof(Person))));
 
             cache.PutAll(SqlDb.GetTestData().ToDictionary(x => x.Id, x => x));
 

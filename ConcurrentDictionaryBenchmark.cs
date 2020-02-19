@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
@@ -10,6 +11,8 @@ namespace IgniteNetBenchmarks
     /// Compares generic vs non-generic <see cref="ConcurrentDictionary{TKey,TValue}"/> usage.
     /// For Native Near Cache feature.
     /// </summary>
+    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class ConcurrentDictionaryBenchmark
     {
         private const int Count = 10000;

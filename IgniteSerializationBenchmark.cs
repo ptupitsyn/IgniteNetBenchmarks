@@ -5,10 +5,13 @@ using System.Reflection;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Binary;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using ProtoBuf;
 
 namespace IgniteNetBenchmarks
 {
+    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class IgniteSerializationBenchmark
     {
         private readonly Func<object, byte[]> _serialize;

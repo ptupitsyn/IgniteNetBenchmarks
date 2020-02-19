@@ -2,9 +2,12 @@
 using System.Linq.Expressions;
 using System.Reflection.Emit;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
+    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
     public class CasterBenchmark
     {
         private static readonly long Val = long.MaxValue/2;

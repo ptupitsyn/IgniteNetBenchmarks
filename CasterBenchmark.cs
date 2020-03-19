@@ -6,8 +6,9 @@ using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
-    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    //[SimpleJob(RuntimeMoniker.NetCoreApp22)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [MemoryDiagnoser]
     public class CasterBenchmark
     {
         private static readonly long Val = long.MaxValue/2;
@@ -31,7 +32,7 @@ namespace IgniteNetBenchmarks
                 throw new Exception();
         }
 
-        [Benchmark]
+        //[Benchmark]
         public void UnsafeCast()
         {
             var x = TypeCaster3<long>.Cast(Val);

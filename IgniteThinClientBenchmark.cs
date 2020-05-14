@@ -1,17 +1,19 @@
 using Apache.Ignite.Core;
+using Apache.Ignite.Core.Cache;
 using Apache.Ignite.Core.Client;
 using Apache.Ignite.Core.Client.Cache;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
 
 namespace IgniteNetBenchmarks
 {
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [BaselineColumn]
+    [ShortRunJob]
     public class IgniteThinClientBenchmark
     {
         private ICacheClient<int, string> _cache;
         private ICacheClient<int, string> _cachePartitionAware;
-        
+        private ICache<int, string> _thickCache;
+
         [GlobalSetup]
         public void SetUp()
         {
@@ -36,6 +38,9 @@ namespace IgniteNetBenchmarks
             _cachePartitionAware = Ignition.StartClient(cfg2).GetOrCreateCache<int, string>("c");
 
             _cache[1] = "Hello, World!";
+
+            var thickClient = Ignition.Start(new IgniteConfiguration {ClientMode = true});
+            _thickCache = thickClient.GetCache<int, string>("c");
         }
 
         [Benchmark]
@@ -48,6 +53,12 @@ namespace IgniteNetBenchmarks
         public void GetPartitionAware()
         {
             _cachePartitionAware.Get(1);
+        }
+
+        [Benchmark]
+        public void GetThick()
+        {
+            _thickCache.Get(1);
         }
     }
 }

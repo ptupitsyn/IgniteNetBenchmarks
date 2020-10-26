@@ -58,3 +58,6 @@ ipch/
 packages
 *.classname
 *.nupkg
+
+# JetBrains IDEs
+.idea

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Apache.Ignite.Core;
 using Apache.Ignite.Core.Cache;
 using Apache.Ignite.Core.Cache.Affinity.Rendezvous;
@@ -43,17 +44,19 @@ namespace IgniteNetBenchmarks
 
             // Map: For every partition, perform an affinity call, which guarantees that specified partition stays
             // on the current node during the call.
-            var res = Enumerable.Range(0, partitions)
-                .Select(partition => compute.AffinityCall(
+            var tasks = Enumerable.Range(0, partitions)
+                .Select(partition => compute.AffinityCallAsync(
                     cacheNames,
                     partition,
                     new PersonDataSumFunc
                     {
                         CacheName = cacheName,
                         Partition = partition
-                    }))
-                // Reduce: Sum up the results.
-                .Sum();
+                    })).ToArray();
+
+            Task.WaitAll(tasks);
+
+            var result = tasks.Select(t => t.Result).Sum();
         }
 
         [GlobalSetup]

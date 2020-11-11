@@ -13,8 +13,9 @@ using ProtoBuf;
 
 namespace IgniteNetBenchmarks
 {
-    [SimpleJob(RuntimeMoniker.NetCoreApp22)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp21)]
     [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
     [MemoryDiagnoser]
     public class IgniteSerializationBenchmark
     {
@@ -53,7 +54,7 @@ namespace IgniteNetBenchmarks
                 marsh.GetType()
                     .GetMethod("Unmarshal", new[] {typeof(byte[]), binaryMode})
                     .MakeGenericMethod(typeof(object));
-            
+
             _deserialize =
                 (Func<byte[], int, object>)
                 Delegate.CreateDelegate(typeof(Func<byte[], int, object>), marsh, unmarshalMethod);
@@ -136,7 +137,7 @@ namespace IgniteNetBenchmarks
                 return Serializer.Deserialize<T>(ms);
             }
         }
-        
+
         private static IgniteConfiguration GetIgniteConfiguration()
         {
             return new IgniteConfiguration
@@ -151,7 +152,7 @@ namespace IgniteNetBenchmarks
                     SocketTimeout = TimeSpan.FromSeconds(0.3)
                 },
                 BinaryConfiguration = new BinaryConfiguration(
-                    typeof(Person), 
+                    typeof(Person),
                     typeof(PersonManualRaw),
                     typeof(PersonManual))
                 {
